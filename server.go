@@ -27,7 +27,7 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var reqcache JsonBodyValue
-	// Add addint to db
+	// todo add addint to queue
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
 		log.Println(err)
