@@ -9,19 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// getCache gets all the cache from RAM
-func getCache(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(cache)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-	} else {
-		w.WriteHeader(http.StatusOK)
-	}
-}
-
 // addCache add cache to RAM and db
 func addCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -31,19 +18,19 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
 		log.Println(err)
-		// todo add err response
-	} else {
-		if _, ok := cache; ok {
-
-		} else {
-			cache[reqcache.Key] = CacheValue{
-				reqcache.Value,
-				reqcache.Deltime,
-			}
-
-			w.WriteHeader(http.StatusOK)
-		}
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
+	if _, ok := cache[reqcache.Key]; ok {
+		w.Write([]byte("Such key is already exist"))
+		return
+	}
+	cache[reqcache.Key] = CacheValue{
+		reqcache.Value,
+		reqcache.Deltime,
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 // getOneCache gets cache my Key in URL as a param
