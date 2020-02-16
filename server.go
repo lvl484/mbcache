@@ -112,8 +112,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 func delTracker() {
 	for {
 		for k, v := range cache {
-			//do I need to make 1 more struct for time for comparing
-			if v.Deltime < time.Now().Format("01-JAN-2006 15:04") {
+			if v.Deltime.Before(time.Now()) {
 				delete(cache, k)
 			}
 		}
