@@ -11,6 +11,8 @@ import (
 
 const key = "Key"
 
+var stats cacheStats
+
 //todo add mutex for all func
 //todo add middleware
 // addCache add cache to RAM and db
@@ -62,7 +64,7 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	//togo adding to queue
 	if _, ok := cache[params[key]]; ok {
-		err := json.NewEncoder(w).Encode(cache[params["Key"]])
+		err := json.NewEncoder(w).Encode(cache[params[key]])
 		if err != nil {
 			log.Println(err)
 			return
@@ -109,13 +111,13 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 
 //getStats gives info about "Stats of cache, number of records, memory consumption..
 func getStats(w http.ResponseWriter, r *http.Request) {
-	type cacheStats struct {
-		statsOfCache int
-		numOfRec     int
-		memCons      int
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewEncoder(w).Encode(stats)
+	if err != nil {
+		log.Println(err)
 	}
-	var stats cacheStats
-	stats.numOfRec = len(cache)
+
 }
 
 // delTracker deletes cache from RAM every minute
