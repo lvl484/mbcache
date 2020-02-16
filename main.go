@@ -20,6 +20,7 @@ func main() {
 		port = "80"
 	}
 	go delTracker()
+	go queueTracker()
 
 	err := http.ListenAndServe(":"+port, newRouter())
 	if err != nil {

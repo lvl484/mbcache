@@ -61,6 +61,7 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 // getOneCache gets cache my Key in URL as a param
 func getOneCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	params := mux.Vars(r)
 	//togo adding to queue
 	if _, ok := cache[params[key]]; ok {
@@ -79,6 +80,7 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 // deleteCache deletes cache from RAM(map)
 func deleteCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	params := mux.Vars(r)
 	//todo add func in queue
 	if _, ok := cache[params[key]]; ok {
@@ -122,6 +124,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 
 // delTracker deletes cache from RAM every minute
 func delTracker() {
+	//todo add req to bd (queue)
 	for {
 		for k, v := range cache {
 			if v.Deltime.Before(time.Now()) {
@@ -130,4 +133,8 @@ func delTracker() {
 		}
 		time.Sleep(time.Minute)
 	}
+}
+
+//queueTracker works with db and queue
+func queueTracker() {
 }
