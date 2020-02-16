@@ -26,38 +26,38 @@ func getCache(w http.ResponseWriter, r *http.Request) {
 func addCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var reqcache Jvalue
+	var reqcache JsonBodyValue
 	// Add addint to db
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
 		log.Println(err)
 		// todo add err response
 	} else {
-		if _,ok:=cache;ok{
+		if _, ok := cache; ok {
 
-		}else{
-		cache[reqcache.Key] = Svalue{
-			reqcache.Value,
-			reqcache.Deltime,
+		} else {
+			cache[reqcache.Key] = CacheValue{
+				reqcache.Value,
+				reqcache.Deltime,
+			}
+
+			w.WriteHeader(http.StatusOK)
 		}
-	
-		w.WriteHeader(http.StatusOK)
 	}
-}
 }
 
 // getOneCache gets cache my Key in URL as a param
 func getOneCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-//togo 
+	//togo
 	if _, ok := cache[params["Key"]]; ok {
 		err := json.NewEncoder(w).Encode(cache[params["Key"]])
 		if err != nil {
 			log.Println(err)
 			return
-		} 
-			w.WriteHeader(http.StatusOK)
+		}
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 	w.WriteHeader(http.StatusNotFound)
@@ -73,16 +73,16 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 		delete(cache, params["Key"])
 		w.WriteHeader(http.StatusOK)
 		return
-	} 
-		w.WriteHeader(http.StatusNotFound)
-	
+	}
+	w.WriteHeader(http.StatusNotFound)
+
 }
 
 // updateCache updates cache by the key
 func updateCache(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	var reqcache Jvalue
+	var reqcache JsonBodyValue
 
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
@@ -90,7 +90,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else {
-		cache[params["Key"]] = Svalue{
+		cache[params["Key"]] = CacheValue{
 			reqcache.Value,
 			reqcache.Deltime,
 		}
@@ -105,7 +105,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 		memCons      int
 	}
 	var stats cacheStats
-	stats.numOfRec := len(cache)
+	stats.numOfRec = len(cache)
 }
 
 // delTracker deletes cache from RAM every minute

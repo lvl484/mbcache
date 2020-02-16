@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-var cache map[string]Svalue
+var cache map[string]CacheValue
 
 func main() {
 
@@ -19,7 +19,6 @@ func main() {
 	if port == "" {
 		port = "80"
 	}
-	//func below is waiting for expert's comment
 	go delTracker()
 
 	err := http.ListenAndServe(":"+port, newRouter())

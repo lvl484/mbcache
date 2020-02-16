@@ -1,12 +1,14 @@
 package main
 
-type Jvalue struct {
-	Key     string `json:"Key"`
-	Value   []byte `json:"Value"`
-	Deltime string `json:"Deltyme"` //*time.Time
+import "time"
+
+type JsonBodyValue struct {
+	Key     string     `json:"Key"`
+	Value   []byte     `json:"Value"`
+	Deltime *time.Time `json:"Deltyme"`
 }
 
-type Svalue struct {
+type CacheValue struct {
 	Value   []byte
-	Deltime string //*time.Time
+	Deltime *time.Time
 }
