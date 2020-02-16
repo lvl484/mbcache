@@ -33,11 +33,30 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func upsertCache(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var reqcache JsonBodyValue
+	// todo add addint to queue
+	err := json.NewDecoder(r.Body).Decode(&reqcache)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	cache[reqcache.Key] = CacheValue{
+		reqcache.Value,
+		reqcache.Deltime,
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
 // getOneCache gets cache my Key in URL as a param
 func getOneCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	//togo
+	//togo dding to queue
 	if _, ok := cache[params["Key"]]; ok {
 		err := json.NewEncoder(w).Encode(cache[params["Key"]])
 		if err != nil {
