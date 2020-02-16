@@ -9,6 +9,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const key = "Key"
+
+//todo add mutex for all func
+//todo add middleware
 // addCache add cache to RAM and db
 func addCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -56,8 +60,8 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 func getOneCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-	//togo dding to queue
-	if _, ok := cache[params["Key"]]; ok {
+	//togo adding to queue
+	if _, ok := cache[params[key]]; ok {
 		err := json.NewEncoder(w).Encode(cache[params["Key"]])
 		if err != nil {
 			log.Println(err)
@@ -74,9 +78,9 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 func deleteCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
-
-	if _, ok := cache[params["Key"]]; ok {
-		delete(cache, params["Key"])
+	//todo add func in queue
+	if _, ok := cache[params[key]]; ok {
+		delete(cache, params[key])
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -96,7 +100,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else {
-		cache[params["Key"]] = CacheValue{
+		cache[params[key]] = CacheValue{
 			reqcache.Value,
 			reqcache.Deltime,
 		}
