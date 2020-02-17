@@ -3,12 +3,12 @@ package main
 import "time"
 
 type JsonBodyValue struct {
-	Key     string    `json:"Key"`
-	Value   []byte    `json:"Value"`
-	Deltime time.Time `json:"Deltyme"`
+	Key     string     `json:"Key"`
+	Value   []byte     `json:"Value"`
+	Deltime *time.Time `json:"Deltyme"`
 }
 
 type CacheValue struct {
 	Value   []byte
-	Deltime time.Time
+	Deltime *time.Time
 }
