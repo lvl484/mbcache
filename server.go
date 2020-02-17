@@ -143,11 +143,13 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 func delTracker() {
 	//todo add req to bd (queue)
 	for {
+		c.Lock()
 		for k, v := range c.cache {
 			if v.Deltime.Before(time.Now()) {
 				delete(c.cache, k)
 			}
 		}
+		c.Unlock()
 		time.Sleep(time.Minute)
 	}
 }
