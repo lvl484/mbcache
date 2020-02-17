@@ -21,8 +21,6 @@ var c safeCache
 
 var stats cacheStats
 
-//todo add mutex for all func
-//todo add middleware
 // addCache add cache to RAM and db
 func addCache(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -62,10 +60,12 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+	c.Lock()
 	c.cache[reqcache.Key] = CacheValue{
 		reqcache.Value,
 		reqcache.Deltime,
 	}
+	c.Unlock()
 	w.WriteHeader(http.StatusOK)
 }
 
