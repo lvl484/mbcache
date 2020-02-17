@@ -5,7 +5,7 @@ import "time"
 type JsonBodyValue struct {
 	Key     string     `json:"Key"`
 	Value   []byte     `json:"Value"`
-	Deltime *time.Time `json:"Deltyme"`
+	Deltime *time.Time `json:"Deltime"`
 }
 
 type CacheValue struct {

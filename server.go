@@ -129,20 +129,20 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
-	} else {
-		if reqcache.Deltime == nil {
-			tempt := time.Now().Add(time.Hour)
-			reqcache.Deltime = &tempt
-		}
-		c.Lock()
-		c.cache[params[key]] = CacheValue{
-			reqcache.Value,
-			reqcache.Deltime,
-		}
-		c.Unlock()
-		w.WriteHeader(http.StatusOK)
-		stats.NumOfUpdate++
 	}
+	if reqcache.Deltime == nil {
+		tempt := time.Now().Add(time.Hour)
+		reqcache.Deltime = &tempt
+	}
+	c.Lock()
+	c.cache[params[key]] = CacheValue{
+		reqcache.Value,
+		reqcache.Deltime,
+	}
+	c.Unlock()
+	w.WriteHeader(http.StatusOK)
+	stats.NumOfUpdate++
+
 }
 
 //getStats gives info about "Stats of cache, number of records, memory consumption..
