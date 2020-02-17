@@ -4,12 +4,20 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
 )
 
 const key = "Key"
+
+type safeCache struct {
+	sync.Mutex
+	cache map[string]CacheValue
+}
+
+var c safeCache
 
 var stats cacheStats
 
@@ -28,11 +36,11 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	if _, ok := cache[reqcache.Key]; ok {
+	if _, ok := c.cache[reqcache.Key]; ok {
 		w.Write([]byte("Such key is already exist"))
 		return
 	}
-	cache[reqcache.Key] = CacheValue{
+	c.cache[reqcache.Key] = CacheValue{
 		reqcache.Value,
 		reqcache.Deltime,
 	}
@@ -51,7 +59,7 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	cache[reqcache.Key] = CacheValue{
+	c.cache[reqcache.Key] = CacheValue{
 		reqcache.Value,
 		reqcache.Deltime,
 	}
@@ -64,8 +72,8 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	//togo adding to queue
-	if _, ok := cache[params[key]]; ok {
-		err := json.NewEncoder(w).Encode(cache[params[key]])
+	if _, ok := c.cache[params[key]]; ok {
+		err := json.NewEncoder(w).Encode(c.cache[params[key]])
 		if err != nil {
 			log.Println(err)
 			return
@@ -83,8 +91,8 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	//todo add func in queue
-	if _, ok := cache[params[key]]; ok {
-		delete(cache, params[key])
+	if _, ok := c.cache[params[key]]; ok {
+		delete(c.cache, params[key])
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -104,7 +112,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else {
-		cache[params[key]] = CacheValue{
+		c.cache[params[key]] = CacheValue{
 			reqcache.Value,
 			reqcache.Deltime,
 		}
@@ -126,9 +134,9 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 func delTracker() {
 	//todo add req to bd (queue)
 	for {
-		for k, v := range cache {
+		for k, v := range c.cache {
 			if v.Deltime.Before(time.Now()) {
-				delete(cache, k)
+				delete(c.cache, k)
 			}
 		}
 		time.Sleep(time.Minute)

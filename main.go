@@ -11,8 +11,6 @@ import (
 	"os"
 )
 
-var cache map[string]CacheValue
-
 func main() {
 
 	port := os.Getenv("PORT")
