@@ -36,14 +36,17 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+	c.Lock()
 	if _, ok := c.cache[reqcache.Key]; ok {
 		w.Write([]byte("Such key is already exist"))
+		c.Unlock()
 		return
 	}
 	c.cache[reqcache.Key] = CacheValue{
 		reqcache.Value,
 		reqcache.Deltime,
 	}
+	c.Unlock()
 	w.WriteHeader(http.StatusOK)
 }
 
