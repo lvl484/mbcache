@@ -46,6 +46,7 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)
+	stats.NumOfAdd++
 }
 
 func upsertCache(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +68,7 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)
+	stats.NumOfUpsert++
 }
 
 // getOneCache gets cache my Key in URL as a param
@@ -84,6 +86,7 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusOK)
+		stats.NumOfGet++
 		return
 	}
 	w.WriteHeader(http.StatusNotFound)
@@ -101,6 +104,7 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 		delete(c.cache, params[key])
 		c.Unlock()
 		w.WriteHeader(http.StatusOK)
+		stats.NumOfDel++
 		return
 	}
 	w.WriteHeader(http.StatusNotFound)
@@ -125,6 +129,8 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 			reqcache.Deltime,
 		}
 		c.Unlock()
+		w.WriteHeader(http.StatusOK)
+		stats.NumOfUpdate++
 	}
 }
 
