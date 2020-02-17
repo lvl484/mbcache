@@ -75,8 +75,10 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	//togo adding to queue
+	c.Lock()
 	if _, ok := c.cache[params[key]]; ok {
 		err := json.NewEncoder(w).Encode(c.cache[params[key]])
+		c.Unlock()
 		if err != nil {
 			log.Println(err)
 			return
