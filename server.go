@@ -18,7 +18,6 @@ type safeCache struct {
 }
 
 var c safeCache
-
 var stats cacheStats
 
 // addCache add cache to RAM and db
@@ -33,6 +32,9 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
+	}
+	if reqcache.Deltime.IsZero() {
+		reqcache.Deltime = time.Now().Add(time.Hour)
 	}
 	c.Lock()
 	if _, ok := c.cache[reqcache.Key]; ok {
@@ -60,6 +62,9 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
+	}
+	if reqcache.Deltime.IsZero() {
+		reqcache.Deltime = time.Now().Add(time.Hour)
 	}
 	c.Lock()
 	c.cache[reqcache.Key] = CacheValue{
@@ -123,6 +128,9 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else {
+		if reqcache.Deltime.IsZero() {
+			reqcache.Deltime = time.Now().Add(time.Hour)
+		}
 		c.Lock()
 		c.cache[params[key]] = CacheValue{
 			reqcache.Value,
