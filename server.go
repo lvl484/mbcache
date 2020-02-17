@@ -119,10 +119,12 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else {
+		c.Lock()
 		c.cache[params[key]] = CacheValue{
 			reqcache.Value,
 			reqcache.Deltime,
 		}
+		c.Unlock()
 	}
 }
 
