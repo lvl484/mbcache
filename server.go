@@ -148,9 +148,9 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		reqcache.Value,
 		reqcache.Deltime,
 	}
+	stats.NumOfUpdate++
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)
-	stats.NumOfUpdate++
 
 }
 

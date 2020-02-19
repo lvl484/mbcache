@@ -12,3 +12,8 @@ type CacheValue struct {
 	Value   []byte
 	Deltime *time.Time
 }
+
+type queueData struct {
+	operaion string
+	data     JsonBodyValue
+}
