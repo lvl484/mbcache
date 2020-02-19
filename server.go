@@ -117,6 +117,7 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 func deleteCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
+
 	//todo add func in queue
 	c.Lock()
 	if _, ok := c.cache[params[key]]; !ok {
@@ -124,7 +125,8 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	toQueue()
+	reqcache = JsonBodyValue{params[key], c.cache[params[key]].Value, c.cache[params[key]].Deltime}
+	toQueue(reqcache, opDelete)
 	delete(c.cache, params[key])
 	stats.NumOfDel++
 	c.Unlock()
@@ -158,6 +160,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		reqcache.Value,
 		reqcache.Deltime,
 	}
+	toQueue(reqcache, opUpdate)
 	stats.NumOfUpdate++
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)
