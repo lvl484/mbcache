@@ -1,6 +1,8 @@
 package main
 
-var queueCache chan queueData = make(chan queueData, 1000)
+const capOfQueue = 1000
+
+var queueCache chan queueData = make(chan queueData, capOfQueue)
 
 func toQueue(data JsonBodyValue, operation int) {
 	var c queueData = queueData{operation, data}
