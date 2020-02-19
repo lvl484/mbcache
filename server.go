@@ -134,6 +134,11 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	if _, ok := c.cache[reqcache.Key]; !ok {
+		w.Write([]byte("Such key is not exist"))
+		c.Unlock()
+		return
+	}
 	if reqcache.Deltime == nil {
 		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
