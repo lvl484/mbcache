@@ -109,14 +109,16 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	//todo add func in queue
 	c.Lock()
-	if _, ok := c.cache[params[key]]; ok {
-		delete(c.cache, params[key])
+	if _, ok := c.cache[params[key]]; !ok {
 		c.Unlock()
-		w.WriteHeader(http.StatusOK)
-		stats.NumOfDel++
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	w.WriteHeader(http.StatusNotFound)
+
+	delete(c.cache, params[key])
+	stats.NumOfDel++
+	c.Unlock()
+	w.WriteHeader(http.StatusOK)
 
 }
 
