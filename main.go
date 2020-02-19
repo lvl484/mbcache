@@ -12,7 +12,9 @@ func main() {
 	if port == "" {
 		port = "8000"
 	}
-	//go delTracker()
+	queueCache := make(chan queueData, 1000)
+	defer close(queueCache)
+	go delTracker()
 	//go queueTracker()
 
 	//doesn't work with newRouter
