@@ -23,7 +23,6 @@ var stats cacheStats
 
 // addCache add cache to RAM and db
 func addCache(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
 	var reqcache JsonBodyValue
 	// todo add addint to queue
@@ -54,7 +53,6 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 }
 
 func upsertCache(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
 	var reqcache JsonBodyValue
 	// todo add addint to queue
@@ -81,7 +79,6 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 
 // getOneCache gets cache my Key in URL as a param
 func getOneCache(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
 	//togo adding to queue
@@ -103,7 +100,6 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 
 // deleteCache deletes cache from RAM(map)
 func deleteCache(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
 	//todo add func in queue
@@ -148,7 +144,6 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 
 //getStats gives info about "Stats of cache, number of records, memory consumption..
 func getStats(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
 	err := json.NewEncoder(w).Encode(stats)
 	if err != nil {
