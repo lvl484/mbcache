@@ -15,9 +15,8 @@ func main() {
 
 	defer close(queueCache)
 	go delTracker()
-	//go queueTracker()
+	go queueTracker()
 
-	//doesn't work with newRouter
 	err := http.ListenAndServe(":"+port, newRouter())
 	if err != nil {
 		log.Println(err)

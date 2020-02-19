@@ -1,7 +1,5 @@
 package main
 
-const capOfQueue = 1000
-
 var queueCache chan queueData = make(chan queueData, capOfQueue)
 
 func toQueue(data JsonBodyValue, operation int) {
@@ -9,5 +7,5 @@ func toQueue(data JsonBodyValue, operation int) {
 	queueCache <- c
 }
 func queueTracker() {
-
+	//add chech chal is empty and op to db with cases opDelete,opUpdate,opCreate
 }

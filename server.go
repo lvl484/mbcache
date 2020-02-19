@@ -10,11 +10,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const key = "Key"
-const defDelTime = time.Hour
-const opCreate = 0
-const opDelete = 1
-const opUpdate = 2
+const (
+	key        = "Key"
+	defDelTime = time.Hour
+	opCreate   = 0
+	opDelete   = 1
+	opUpdate   = 2
+	capOfQueue = 1000
+)
 
 type safeCache struct {
 	sync.Mutex
