@@ -31,7 +31,6 @@ var stats cacheStats
 func addCache(w http.ResponseWriter, r *http.Request) {
 
 	var reqcache JsonBodyValue
-	// todo add addint to queue
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
 		log.Println(err)
@@ -63,7 +62,6 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 func upsertCache(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var reqcache JsonBodyValue
-	// todo add addint to queue
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
 		log.Println(err)
@@ -96,9 +94,8 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 func getOneCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-	//togo adding to queue
-	c.Lock()
 
+	c.Lock()
 	if _, ok := c.cache[params[key]]; !ok {
 		w.WriteHeader(http.StatusNotFound)
 		c.Unlock()
@@ -121,7 +118,6 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	//todo add func in queue
 	c.Lock()
 	if _, ok := c.cache[params[key]]; !ok {
 		c.Unlock()
@@ -182,7 +178,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 
 // delTracker deletes cache from RAM every minute
 func delTracker() {
-	//todo add req to bd (queue)
+
 	for {
 		c.Lock()
 		for k, v := range c.cache {
@@ -194,5 +190,3 @@ func delTracker() {
 		time.Sleep(time.Minute)
 	}
 }
-
-//queueTracker works with db and queue
