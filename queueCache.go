@@ -1,15 +1,6 @@
 package main
 
-func toQueue(data queueData, operation int) {
-	switch operation {
-	case 0:
-
-	case 1:
-
-	case 2:
-
-	case 3:
-
-	}
-
+func toQueue(data JsonBodyValue, operation int) {
+	var c queueData = queueData{operation, data}
+	queueCache <- c
 }

@@ -6,13 +6,15 @@ import (
 	"os"
 )
 
+var queueCache chan queueData = make(chan queueData, 1000)
+
 func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
 	}
-	queueCache := make(chan queueData, 1000)
+
 	defer close(queueCache)
 	go delTracker()
 	//go queueTracker()

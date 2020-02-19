@@ -1,6 +1,6 @@
 package main
 
 type queueData struct {
-	operaion string
+	operaion int
 	data     JsonBodyValue
 }

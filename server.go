@@ -12,6 +12,9 @@ import (
 
 const key = "Key"
 const defDelTime = time.Hour
+const opCreate = 0
+const opDelete = 1
+const opUpdate = 2
 
 type safeCache struct {
 	sync.Mutex
