@@ -11,6 +11,7 @@ import (
 )
 
 const key = "Key"
+const defDelTime = time.Hour
 
 type safeCache struct {
 	sync.Mutex
@@ -34,7 +35,7 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if reqcache.Deltime == nil {
-		tempt := time.Now().Add(time.Hour)
+		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
 	}
 	c.Lock()
@@ -65,7 +66,7 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if reqcache.Deltime == nil {
-		tempt := time.Now().Add(time.Hour)
+		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
 	}
 	c.Lock()
@@ -131,7 +132,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if reqcache.Deltime == nil {
-		tempt := time.Now().Add(time.Hour)
+		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
 	}
 	c.Lock()
