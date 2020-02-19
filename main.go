@@ -6,8 +6,6 @@ import (
 	"os"
 )
 
-var queueCache chan queueData = make(chan queueData, 1000)
-
 func main() {
 
 	port := os.Getenv("PORT")
