@@ -62,7 +62,9 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 
 func upsertCache(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+	pkey := params[key]
 	var reqcache JsonBodyValue
+
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
 	if err != nil {
 		log.Println(err)
@@ -70,7 +72,7 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	reqcache.Key = params[key]
+	reqcache.Key = pkey
 	if reqcache.Deltime == nil {
 		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
@@ -95,15 +97,15 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 func getOneCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
-
+	pkey := params[key]
 	c.Lock()
-	if _, ok := c.cache[params[key]]; !ok {
+	if _, ok := c.cache[pkey]; !ok {
 		w.WriteHeader(http.StatusNotFound)
 		c.Unlock()
 		return
 
 	}
-	err := json.NewEncoder(w).Encode(c.cache[params[key]])
+	err := json.NewEncoder(w).Encode(c.cache[pkey])
 	stats.NumOfGet++
 	c.Unlock()
 	if err != nil {
@@ -118,15 +120,16 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 func deleteCache(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
+	pkey := params[key]
 
 	c.Lock()
-	if _, ok := c.cache[params[key]]; !ok {
+	if _, ok := c.cache[pkey]; !ok {
 		c.Unlock()
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	toQueueDelete(params[key])
-	delete(c.cache, params[key])
+	toQueueDelete(pkey)
+	delete(c.cache, pkey)
 	stats.NumOfDel++
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)
@@ -136,7 +139,7 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 // updateCache updates cache by the key
 func updateCache(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-
+	pkey := params[key]
 	var reqcache JsonBodyValue
 
 	err := json.NewDecoder(r.Body).Decode(&reqcache)
@@ -156,7 +159,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		reqcache.Deltime = &tempt
 	}
 	c.Lock()
-	c.cache[params[key]] = CacheValue{
+	c.cache[pkey] = CacheValue{
 		reqcache.Value,
 		reqcache.Deltime,
 	}
