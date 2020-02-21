@@ -52,7 +52,7 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 		reqcache.Value,
 		reqcache.Deltime,
 	}
-	toQueue(reqcache, opCreate)
+	toQueueCreate(reqcache)
 	stats.NumOfAdd++
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)
@@ -69,16 +69,16 @@ func upsertCache(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	reqcache.Key = params
+	reqcache.Key = params[key]
 	if reqcache.Deltime == nil {
 		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
 	}
 	c.Lock()
 	if _, ok := c.cache[reqcache.Key]; ok {
-		toQueue(reqcache, opUpdate)
+		toQueueUpdate(reqcache)
 	} else {
-		toQueue(reqcache, opCreate)
+		toQueueCreate(reqcache)
 	}
 	c.cache[reqcache.Key] = CacheValue{
 		reqcache.Value,
@@ -124,8 +124,7 @@ func deleteCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	reqcache = JsonBodyValue{params[key], c.cache[params[key]].Value, c.cache[params[key]].Deltime}
-	toQueue(reqcache, opDelete)
+	toQueueDelete(params[key])
 	delete(c.cache, params[key])
 	stats.NumOfDel++
 	c.Unlock()
@@ -159,7 +158,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		reqcache.Value,
 		reqcache.Deltime,
 	}
-	toQueue(reqcache, opUpdate)
+	toQueueUpdate(reqcache)
 	stats.NumOfUpdate++
 	c.Unlock()
 	w.WriteHeader(http.StatusOK)

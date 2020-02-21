@@ -2,8 +2,17 @@ package main
 
 var queueCache chan queueData = make(chan queueData, capOfQueue)
 
-func toQueue(data JsonBodyValue, operation int) {
-	var c queueData = queueData{operation, data}
+func toQueueCreate(data JsonBodyValue) {
+	var c queueData = queueData{opCreate, data}
+	queueCache <- c
+}
+func toQueueUpdate(data JsonBodyValue) {
+	var c queueData = queueData{opUpdate, data}
+	queueCache <- c
+}
+func toQueueDelete(qkey string) {
+	var data JsonBodyValue = JsonBodyValue{qkey, nil, nil}
+	var c queueData = queueData{opDelete, data}
 	queueCache <- c
 }
 func queueTracker() {
