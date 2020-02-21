@@ -146,6 +146,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if _, ok := c.cache[reqcache.Key]; !ok {
+		w.WriteHeader(http.StatusConflict)
 		w.Write([]byte("Such key is not exist"))
 		c.Unlock()
 		return
