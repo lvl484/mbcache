@@ -44,6 +44,7 @@ func addCache(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Lock()
 	if _, ok := c.cache[reqcache.Key]; ok {
+		w.WriteHeader(http.StatusConflict)
 		w.Write([]byte("Such key is already exist"))
 		c.Unlock()
 		return
