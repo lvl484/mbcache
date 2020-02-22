@@ -30,6 +30,7 @@ func main() {
 		fmt.Println(err)
 	}
 	defer db.Close()
+	getFromDB()
 
 	port := os.Getenv("PORT")
 	if port == "" {
