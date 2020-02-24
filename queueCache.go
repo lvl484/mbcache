@@ -11,7 +11,7 @@ func toQueueUpdate(data JsonBodyValue) {
 	queueCache <- c
 }
 func toQueueDelete(qkey string) {
-	var data JsonBodyValue = JsonBodyValue{qkey, nil, nil}
+	var data JsonBodyValue = JsonBodyValue{qkey, "", nil}
 	var c queueData = queueData{opDelete, data}
 	queueCache <- c
 }
