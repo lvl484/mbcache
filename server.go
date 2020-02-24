@@ -101,6 +101,7 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 	c.Lock()
 	if _, ok := c.cache[pkey]; !ok {
 		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No value with suck key"))
 		c.Unlock()
 		return
 
