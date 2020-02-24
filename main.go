@@ -36,7 +36,8 @@ func main() {
 	}
 
 	defer close(queueCache)
-	//go delTracker()
+
+	go delTracker()
 	//go queueTracker()
 
 	err := http.ListenAndServe(":"+port, newRouter())
