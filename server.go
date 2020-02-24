@@ -101,7 +101,7 @@ func getOneCache(w http.ResponseWriter, r *http.Request) {
 	c.Lock()
 	if _, ok := c.cache[pkey]; !ok {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No value with suck key"))
+		w.Write([]byte("No value with such key"))
 		c.Unlock()
 		return
 
@@ -149,6 +149,8 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	reqcache.Key = pkey
+	c.Lock()
 	if _, ok := c.cache[reqcache.Key]; !ok {
 		w.WriteHeader(http.StatusConflict)
 		w.Write([]byte("Such key is not exist"))
@@ -159,7 +161,7 @@ func updateCache(w http.ResponseWriter, r *http.Request) {
 		tempt := time.Now().Add(defDelTime)
 		reqcache.Deltime = &tempt
 	}
-	c.Lock()
+
 	c.cache[pkey] = CacheValue{
 		reqcache.Value,
 		reqcache.Deltime,

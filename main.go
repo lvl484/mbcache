@@ -13,14 +13,14 @@ import (
 const (
 	dbhost = "localhost"
 	dbport = 5432
-	dbuser = "postgres"
-	dbpass = "qwzss84210p"
+	dbuser = "cacheuser"
+	dbpass = "pgpassword"
 	dbname = "postgres"
 )
 
 func main() {
 	c.cache = make(map[string]CacheValue)
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		dbhost, dbport,
 		dbuser, dbpass, dbname)
@@ -44,7 +44,7 @@ func main() {
 	defer close(queueCache)
 
 	go delTracker()
-	//go queueTracker()
+	go queueTracker(db)
 
 	err = http.ListenAndServe(":"+port, newRouter())
 	if err != nil {
