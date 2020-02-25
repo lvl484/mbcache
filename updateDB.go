@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"time"
 )
@@ -62,10 +61,8 @@ func getFromDB(db *sql.DB) {
 		temp.Value = temp2.Value
 		layout := "2006-01-02 15:04:05-07:00"
 		t, _ := time.Parse(layout, temp2.Deltime)
-		fmt.Println(temp2.Deltime)
 		temp.Deltime = &t
 		c.cache[temp.Key] = CacheValue{temp.Value, temp.Deltime}
-		fmt.Println(c.cache)
 		c.Unlock()
 	}
 
