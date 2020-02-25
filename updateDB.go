@@ -41,12 +41,8 @@ func getFromDB(db *sql.DB) {
 	}
 	for rows.Next() {
 		var temp JsonBodyValue
-		type strToTime struct {
-			Key     string
-			Value   string
-			Deltime string
-		}
-		var temp2 strToTime
+		var temp2 middleDataFromDB
+
 		err = rows.Scan(&temp2.Key, &temp2.Value, &temp2.Deltime)
 		if err != nil {
 			log.Println(err)
@@ -57,8 +53,7 @@ func getFromDB(db *sql.DB) {
 			continue
 		}
 		c.Lock()
-		temp.Key = temp2.Key
-		temp.Value = temp2.Value
+		temp.Key, temp.Value = temp2.Key, temp2.Value
 		layout := "2006-01-02 15:04:05-07:00"
 		t, _ := time.Parse(layout, temp2.Deltime)
 		temp.Deltime = &t

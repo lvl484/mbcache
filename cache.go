@@ -12,3 +12,8 @@ type CacheValue struct {
 	Value   string
 	Deltime *time.Time
 }
+type middleDataFromDB struct {
+	Key     string
+	Value   string
+	Deltime string
+}
