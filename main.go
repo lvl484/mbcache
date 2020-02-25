@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -20,20 +18,9 @@ const (
 
 func main() {
 	c.cache = make(map[string]CacheValue)
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		dbhost, dbport,
-		dbuser, dbpass, dbname)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		log.Println(err)
-	}
-	err = db.Ping()
-	if err != nil {
-		log.Println(err)
-	}
+	db := DBInit()
 	defer db.Close()
+	defer close(queueCache)
 	getFromDB(db)
 
 	port := os.Getenv("PORT")
@@ -41,12 +28,10 @@ func main() {
 		port = "8000"
 	}
 
-	defer close(queueCache)
-
 	go delTracker(db)
 	go queueTracker(db)
 
-	err = http.ListenAndServe(":"+port, newRouter())
+	err := http.ListenAndServe(":"+port, newRouter())
 	if err != nil {
 		log.Println(err)
 	}
