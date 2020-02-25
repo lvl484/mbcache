@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"log"
 )
 
 var queueCache chan queueData = make(chan queueData, capOfQueue)
@@ -26,26 +25,11 @@ func queueTracker(db *sql.DB) {
 		cacheDB := <-queueCache
 		switch cacheDB.operaion {
 		case opCreate:
-			sqlStatments := `INSERT INTO fastcache (CKEY, VALUE, DELTIME)
-		VALUES ($1, $2, $3)`
-			_, err := db.Exec(sqlStatments, cacheDB.data.Key, cacheDB.data.Value, cacheDB.data.Deltime)
-			if err != nil {
-				log.Println(err)
-			}
+			createInDB(db, cacheDB.data)
 		case opUpdate:
-			sqlStatments := `UPDATE fastcache SET VALUE=$2,DELTIME=$3
-		WHERE CKEY=$1;`
-			_, err := db.Exec(sqlStatments, cacheDB.data.Key, cacheDB.data.Value, cacheDB.data.Deltime)
-			if err != nil {
-				log.Println(err)
-			}
+			updateInDB(db, cacheDB.data)
 		case opDelete:
-			sqlStatments := `DELETE FROM fastcache WHERE CKEY=$1;`
-			_, err := db.Exec(sqlStatments, cacheDB.data.Key)
-			if err != nil {
-				log.Println(err)
-			}
-
+			delFromBD(db, cacheDB.data.Key)
 		}
 
 	}

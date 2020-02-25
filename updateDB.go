@@ -7,15 +7,28 @@ import (
 	"time"
 )
 
-func clearDB(db *sql.DB) {
-	sqlStatments := `DELETE FROM fastcache WHERE DELTIME <$1;`
-	_, err := db.Exec(sqlStatments, time.Now())
+func delFromBD(db *sql.DB, dkey string) {
+	sqlStatments := `DELETE FROM fastcache WHERE CKEY=$1;`
+	_, err := db.Exec(sqlStatments, dkey)
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("cache added to db")
 	}
-
+}
+func createInDB(db *sql.DB, body JsonBodyValue) {
+	sqlStatments := `INSERT INTO fastcache (CKEY, VALUE, DELTIME)
+	VALUES ($1, $2, $3)`
+	_, err := db.Exec(sqlStatments, body.Key, body.Value, body.Deltime)
+	if err != nil {
+		log.Println(err)
+	}
+}
+func updateInDB(db *sql.DB, body JsonBodyValue) {
+	sqlStatments := `UPDATE fastcache SET VALUE=$2,DELTIME=$3
+		WHERE CKEY=$1;`
+	_, err := db.Exec(sqlStatments, body.Key, body.Value, body.Deltime)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 //get all data to cache when server starts
@@ -36,12 +49,10 @@ func getFromDB(db *sql.DB) {
 		}
 		var temp2 strToTime
 		err = rows.Scan(&temp2.Key, &temp2.Value, &temp2.Deltime)
-
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-
 		if err = rows.Err(); err != nil {
 			log.Println(err)
 			continue

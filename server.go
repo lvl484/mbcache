@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -184,13 +185,14 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 }
 
 // delTracker deletes cache from RAM every minute
-func delTracker() {
+func delTracker(db *sql.DB) {
 
 	for {
 		c.Lock()
 		for k, v := range c.cache {
 			if v.Deltime.Before(time.Now()) {
 				delete(c.cache, k)
+				delFromBD(db, k)
 			}
 		}
 		c.Unlock()
