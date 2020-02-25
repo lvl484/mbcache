@@ -7,6 +7,17 @@ import (
 	"time"
 )
 
+func clearDB(db *sql.DB) {
+	sqlStatments := `DELETE FROM fastcache WHERE DELTIME <$1;`
+	_, err := db.Exec(sqlStatments, time.Now())
+	if err != nil {
+		log.Println(err)
+	} else {
+		log.Println("cache added to db")
+	}
+
+}
+
 //get all data to cache when server starts
 func getFromDB(db *sql.DB) {
 	rows, err := db.Query(

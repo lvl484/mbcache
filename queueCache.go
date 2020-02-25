@@ -31,8 +31,6 @@ func queueTracker(db *sql.DB) {
 			_, err := db.Exec(sqlStatments, cacheDB.data.Key, cacheDB.data.Value, cacheDB.data.Deltime)
 			if err != nil {
 				log.Println(err)
-			} else {
-				log.Println("cache added to db")
 			}
 		case opUpdate:
 			sqlStatments := `UPDATE fastcache SET VALUE=$2,DELTIME=$3
@@ -40,16 +38,12 @@ func queueTracker(db *sql.DB) {
 			_, err := db.Exec(sqlStatments, cacheDB.data.Key, cacheDB.data.Value, cacheDB.data.Deltime)
 			if err != nil {
 				log.Println(err)
-			} else {
-				log.Println("cache updated in db")
 			}
 		case opDelete:
 			sqlStatments := `DELETE FROM fastcache WHERE CKEY=$1;`
 			_, err := db.Exec(sqlStatments, cacheDB.data.Key)
 			if err != nil {
 				log.Println(err)
-			} else {
-				log.Println("cache deleted from db")
 			}
 
 		}
